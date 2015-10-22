@@ -20,33 +20,52 @@ function queen_attack_menu() {
 function queen_attack_form() {
   $form['queen_column'] = array(
     '#title' => 'Queen Column',
-    '#type' => 'select',
-    '#options' => array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'),
+    '#type' => 'textfield',
     '#description' => t('Please input the column of the queen'),
+    '#element_validate' => array('queen_attack_validate_range'),
+    '#required' => TRUE,
   );
   $form['queen_row'] = array(
     '#title' => 'Queen Row',
-    '#type' => 'select',
-    '#options' => array(1, 2, 3, 4, 5, 6, 7, 8),
+    '#type' => 'textfield',
     '#description' => t('Please input the row of the queen'),
+    '#element_validate' => array('queen_attack_validate_range'),
+    '#required' => TRUE,
   );
   $form['attack_column'] = array(
     '#title' => 'Attacked Column',
-    '#type' => 'select',
-    '#options' => array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'),
+    '#type' => 'textfield',
     '#description' => t('Please input the column of the piece to attack'),
+    '#element_validate' => array('queen_attack_validate_range'),
+    '#required' => TRUE,
   );
   $form['attack_row'] = array(
     '#title' => 'Attacked Row',
-    '#type' => 'select',
-    '#options' => array(1, 2, 3, 4, 5, 6, 7, 8),
+    '#type' => 'textfield',
     '#description' => t('Please input the row of the piece to attack'),
+    '#element_validate' => array('queen_attack_validate_range'),
+    '#required' => TRUE,
   );
   $form['submit'] = array(
       '#type' => 'submit',
       '#value' => 'Go',
     );
   return $form;
+}
+
+function queen_attack_validate_range($element) {
+    if($element['#value'] < 1 || $element['#value'] > 8) {
+        form_error($element, t('Please enter a coordinate between 1 and 8.'));
+    }
+}
+
+function queen_attack_form_validate($form, &$form_state) {
+    if($form_state['values']['queen_column'] === $form_state['values']['attack_column'] && $form_state['values']['queen_row'] === $form_state['values']['attack_row']) {
+        form_set_error('queen_column', t('Pieces cannot share the same coordinates.  Try again.'));
+        form_set_error('queen_row');
+        form_set_error('attack_column');
+        form_set_error('attack_row');
+    }
 }
 
 function queen_attack_form_submit($form, &$form_state) {

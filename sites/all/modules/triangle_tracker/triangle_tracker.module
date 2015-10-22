@@ -46,14 +46,23 @@ function triangle_tracker_form() {
     return $form;
 }
 
+function triangle_tracker_form_validate($form, &$form_state) {
+    $side_a = $form_state['values']['side_a'];
+    $side_b = $form_state['values']['side_b'];
+    $side_c = $form_state['values']['side_c'];
+    if ((($side_a+$side_b) <= $side_c) || (($side_a+$side_c) <= $side_b) || (($side_b+$side_c) <= $side_a)) {
+        form_set_error('side_a', "This isn't a valid triangle!");
+        form_set_error('side_b');
+        form_set_error('side_c');
+    }
+}
+
 function triangle_tracker_form_submit($form, &$form_state) {
     $side_a = $form_state['values']['side_a'];
     $side_b = $form_state['values']['side_b'];
     $side_c = $form_state['values']['side_c'];
 
-    if ((($side_a+$side_b) <= $side_c) || (($side_a+$side_c) <= $side_b) || (($side_b+$side_c) <= $side_a)) {
-        $output = "Is not a triangle";
-    } else if ($side_a === $side_b && $side_a === $side_c) {
+    if ($side_a === $side_b && $side_a === $side_c) {
         $output = "Is equalateral";
     } else if ($side_a === $side_b || $side_a === $side_c || $side_b === $side_c) {
         $output = "Is isosceles";
