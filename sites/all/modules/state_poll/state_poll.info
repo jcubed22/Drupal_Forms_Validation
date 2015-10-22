@@ -1,0 +1,5 @@
+name = State Poll
+description = Polls the user on their home state and ice cream preference
+package = Epicodus Examples
+core = 7.x
+files[] = state_poll.module

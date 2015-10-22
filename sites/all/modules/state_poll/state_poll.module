@@ -1,0 +1,63 @@
+<?php
+
+function state_poll_menu() {
+    $items = array();
+    $items['state_poll'] = array(
+        'title' => 'Ice Cream Poll',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('state_poll_form'),
+        'access callback' => TRUE,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['state_poll_success_page'] = array(
+        'title' => 'Poll Results',
+        'page callback' => 'state_poll_success',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    return $items;
+}
+
+function state_poll_form() {
+    $form['ice_cream'] = array(
+        '#title' => 'Ice Cream Flavor',
+        '#type' => 'textfield',
+        '#description' => t('Enter your favorite flavor of ice cream!'),
+        '#required' => TRUE,
+    );
+    $form['state'] = array(
+        '#title' => 'Home state',
+        '#type' => 'textfield',
+        '#description' => t('Enter your home state!'),
+        '#element_validate' => array('element_validate_state'),
+        '#required' => TRUE,
+    );
+    $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => 'Submit results',
+    );
+    return $form;
+}
+
+function element_validate_state($element) {
+    $valid_inputs = array(
+        'Oregon',
+        'oregon',
+        'OR',
+        'or',
+    );
+
+    if(!in_array($element['#value'], $valid_inputs)) {
+        form_error($element, t('Please enter a valid state name or abbreviation.'));
+    }
+}
+
+function state_poll_form_submit($form, &$form_state) {
+    $_SESSION['ice_cream'] = $form_state['values']['ice_cream'];
+    $form_state['redirect'] = 'state_poll_success_page';
+}
+
+function state_poll_success() {
+    $flavor = $_SESSION['ice_cream'];
+    return "Thank you!  We have you down for $flavor in the state of Oregon!";
+}
